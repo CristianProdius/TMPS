@@ -16,7 +16,7 @@ Chisinau 2024
 <hr></br></br></br>
 
 <h1 align='center'> 
-Laboratory work nr. 1
+Laboratory work nr. 0
 </h1>
 
 # SOLID Principles Implementation Report
