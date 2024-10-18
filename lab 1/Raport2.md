@@ -33,6 +33,7 @@ This project demonstrates the implementation of creational design patterns in a 
 
 ## Project Structure
 
+```
 lab 1/
 │
 ├── src/
@@ -59,6 +60,7 @@ lab 1/
 ├── main.py
 │
 └── Raport2.md
+```
 
 ## Detailed Component Description
 
