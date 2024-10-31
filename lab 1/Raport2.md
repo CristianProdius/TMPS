@@ -116,7 +116,7 @@ The main script demonstrates the usage of all implemented design patterns:
 
 ## Conclusion
 
-FIRST CHATGBT WAS NOT USE! This project successfully demonstrates the implementation and practical use of three fundamental creational design patterns in the context of an online bookstore system. Each pattern addresses specific object creation challenges:
+FIRST CHATGBT WAS NOT USE, if you thing overwise ask me to present it and be Rovnai Ciuvac :)! This project successfully demonstrates the implementation and practical use of three fundamental creational design patterns in the context of an online bookstore system. Each pattern addresses specific object creation challenges:
 
 - The Factory Method provides flexibility in creating different types of books.
 - The Builder pattern simplifies the creation of Author objects with multiple optional attributes.
