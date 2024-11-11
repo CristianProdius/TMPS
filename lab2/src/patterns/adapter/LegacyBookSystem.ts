@@ -1,5 +1,9 @@
 export class LegacyBookSystem {
-  getBookDetails(id: number): string {
-    return `Legacy book details for ID: ${id}`;
+  getBookInfo(id: number): string {
+    return `Book ${id}: Legacy Book Title by Legacy Author`;
+  }
+
+  getBookYear(id: number): number {
+    return 2020;
   }
 }

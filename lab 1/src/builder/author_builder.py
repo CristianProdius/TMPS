@@ -12,7 +12,7 @@ class AuthorBuilder:
         return self
 
     def set_birth_year(self, birth_year):
-        self.birth_year = birth_year
+        self.birth_year = self
         return self
 
     def set_nationality(self, nationality):

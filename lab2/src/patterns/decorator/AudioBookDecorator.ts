@@ -1,8 +1,29 @@
 import { Book } from "../../domain/Book";
+import { BookDecorator } from "./BookDecorator";
 
-export class AudioBookDecorator extends Book {
-  constructor(private book: Book, public duration: number = 180) {
-    super(book.title, book.author, book.year);
+export class AudioBookDecorator implements BookDecorator {
+  private book: Book;
+  private duration: number;
+
+  constructor(book: Book, duration: number = 180) {
+    this.book = book;
+    this.duration = duration;
+  }
+
+  get title(): string {
+    return this.book.title;
+  }
+
+  get author() {
+    return this.book.author;
+  }
+
+  get year(): number {
+    return this.book.year;
+  }
+
+  getDetails(): string {
+    return this.book.getDetails();
   }
 
   getDescription(): string {
