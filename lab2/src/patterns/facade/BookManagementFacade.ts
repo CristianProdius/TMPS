@@ -11,9 +11,10 @@ export class BookManagementFacade {
     this.bookSystem = bookSystem;
   }
 
-  getBookDetails(id: number): string {
+  async getBookDetails(id: number): Promise<string> {
     try {
-      const book = this.bookSystem.fetchBook(id);
+      // Wait for the async fetchBook operation
+      const book = await this.bookSystem.fetchBook(id);
       const audioBook = new AudioBookDecorator(book);
 
       logger.info(`Retrieved book details for ID ${id}: ${book.getDetails()}`);
@@ -25,12 +26,12 @@ export class BookManagementFacade {
     }
   }
 
-  createBook(
+  async createBook(
     title: string,
     authorName: string,
     authorBirthYear: number,
     year: number
-  ): Book {
+  ): Promise<Book> {
     try {
       const author = new Author(authorName, authorBirthYear);
       const book = new Book(title, author, year);
@@ -42,7 +43,10 @@ export class BookManagementFacade {
     }
   }
 
-  createAudioBook(book: Book, duration: number): AudioBookDecorator {
+  async createAudioBook(
+    book: Book,
+    duration: number
+  ): Promise<AudioBookDecorator> {
     try {
       const audioBook = new AudioBookDecorator(book, duration);
       logger.info(`Created audio book: ${audioBook.getDescription()}`);

@@ -4,7 +4,8 @@ export class Book {
   constructor(
     public title: string,
     public author: Author,
-    public year: number
+    public year: number,
+    public id?: number
   ) {}
 
   getDetails(): string {

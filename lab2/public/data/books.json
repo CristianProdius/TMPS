@@ -1,0 +1,40 @@
+{
+  "books": [
+    {
+      "id": 1,
+      "title": "The Great Gatsby",
+      "author": {
+        "name": "F. Scott Fitzgerald",
+        "birthYear": 1896
+      },
+      "year": 1925
+    },
+    {
+      "id": 2,
+      "title": "1984",
+      "author": {
+        "name": "George Orwell",
+        "birthYear": 1903
+      },
+      "year": 1949
+    },
+    {
+      "id": 3,
+      "title": "To Kill a Mockingbird",
+      "author": {
+        "name": "Harper Lee",
+        "birthYear": 1926
+      },
+      "year": 1960
+    },
+    {
+      "id": 4,
+      "title": "The Catcher in the Rye",
+      "author": {
+        "name": "J.D. Salinger",
+        "birthYear": 1919
+      },
+      "year": 1951
+    }
+  ]
+}

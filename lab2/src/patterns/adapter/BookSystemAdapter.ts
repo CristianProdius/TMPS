@@ -1,42 +1,41 @@
 import { Book } from "../../domain/Book";
 import { Author } from "../../domain/Author";
 
-interface ILegacyBookSystem {
-  getBookInfo(id: number): string;
-  getBookYear(id: number): number;
+interface BookData {
+  id: number;
+  title: string;
+  author: {
+    name: string;
+    birthYear: number;
+  };
+  year: number;
 }
 
 export class BookSystemAdapter {
-  private legacySystem: ILegacyBookSystem;
-
-  constructor(legacySystem: ILegacyBookSystem) {
-    this.legacySystem = legacySystem;
+  private async fetchBooksData(): Promise<BookData[]> {
+    try {
+      const response = await fetch("/data/books.json");
+      if (!response.ok) {
+        throw new Error("Failed to fetch books data");
+      }
+      const data = await response.json();
+      return data.books;
+    } catch (error) {
+      console.error("Error loading books:", error);
+      return [];
+    }
   }
 
-  fetchBook(id: number): Book {
-    const bookInfo = this.fetchBookInfo(id);
-    const year = this.fetchBookYear(id);
+  async fetchBook(id: number): Promise<Book> {
+    const books = await this.fetchBooksData();
+    const bookData = books.find((book) => book.id === id);
 
-    const author = new Author(bookInfo.author, 1970);
-    return new Book(bookInfo.title, author, year);
-  }
-
-  private fetchBookInfo(id: number): { title: string; author: string } {
-    const legacyInfo = this.legacySystem.getBookInfo(id);
-    const matches = legacyInfo.match(/Book \d+: (.*) by (.*)/);
-
-    if (!matches) {
-      throw new Error(`Invalid book info format for ID: ${id}`);
+    if (!bookData) {
+      throw new Error(`Book with id ${id} not found`);
     }
 
-    const [, title, authorName] = matches;
-    return {
-      title: title.trim(),
-      author: authorName.trim(),
-    };
-  }
+    const author = new Author(bookData.author.name, bookData.author.birthYear);
 
-  private fetchBookYear(id: number): number {
-    return this.legacySystem.getBookYear(id);
+    return new Book(bookData.title, author, bookData.year, bookData.id);
   }
 }
