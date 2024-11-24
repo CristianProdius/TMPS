@@ -3,12 +3,18 @@ import { Author } from "../../domain/Author";
 import { BookSystemAdapter } from "../adapter/BookSystemAdapter";
 import { AudioBookDecorator } from "../decorator/AudioBookDecorator";
 import { logger } from "../../utilities/logger";
+import { BookOperationStrategy } from "../strategy/BookOperationStrategy";
 
 export class BookManagementFacade {
   private bookSystem: BookSystemAdapter;
+  private strategy: BookOperationStrategy | null = null;
 
   constructor(bookSystem: BookSystemAdapter) {
     this.bookSystem = bookSystem;
+  }
+
+  setStrategy(strategy: BookOperationStrategy) {
+    this.strategy = strategy;
   }
 
   async getBookDetails(id: number): Promise<string> {
@@ -16,9 +22,16 @@ export class BookManagementFacade {
       const book = await this.bookSystem.fetchBook(id);
       const audioBook = new AudioBookDecorator(book);
 
-      logger.info(`Retrieved book details for ID ${id}: ${book.getDetails()}`);
+      if (!this.strategy) {
+        logger.info(
+          `Retrieved book details for ID ${id}: ${book.getDetails()}`
+        );
+        return audioBook.getDescription();
+      }
 
-      return audioBook.getDescription();
+      const result = this.strategy.execute(audioBook);
+      logger.info(`Processed book ID ${id} with strategy: ${result}`);
+      return result;
     } catch (error) {
       logger.error(`Error getting book details for ID ${id}: ${error}`);
       throw new Error(`Failed to get book details: ${error}`);

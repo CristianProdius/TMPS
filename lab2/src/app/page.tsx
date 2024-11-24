@@ -1,9 +1,10 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { BookSystemAdapter } from "../patterns/adapter/BookSystemAdapter";
 import { BookManagementFacade } from "../patterns/facade/BookManagementFacade";
 import { LegacyBookSystem } from "@/patterns/adapter/LegacyBookSystem";
+import { AddBookStrategy } from "@/patterns/strategy/AddBookStrategy";
+import { BookDetailsStrategy } from "@/patterns/strategy/BookDetailsStrategy";
 import { logger } from "../utilities/logger";
 import { X } from "lucide-react";
 
@@ -29,6 +30,7 @@ export default function Home() {
   const [error, setError] = useState<string>("");
   const [availableBooks, setAvailableBooks] = useState<AvailableBook[]>([]);
   const [loadingBooks, setLoadingBooks] = useState(true);
+  const [isAddMode, setIsAddMode] = useState(false);
 
   useEffect(() => {
     const loadAvailableBooks = async () => {
@@ -39,7 +41,6 @@ export default function Home() {
           throw new Error("Failed to load books");
         }
         const data = await response.json();
-        // Check if data.books exists
         if (data && data.books) {
           setAvailableBooks(data.books);
         } else {
@@ -54,7 +55,6 @@ export default function Home() {
         setLoadingBooks(false);
       }
     };
-
     loadAvailableBooks();
   }, []);
 
@@ -73,8 +73,13 @@ export default function Home() {
       const adapter = new BookSystemAdapter(legacySystem);
       const facade = new BookManagementFacade(adapter);
 
-      const details = await facade.getBookDetails(bookId);
+      // Choose strategy based on mode
+      const strategy = isAddMode
+        ? new AddBookStrategy()
+        : new BookDetailsStrategy();
+      facade.setStrategy(strategy);
 
+      const details = await facade.getBookDetails(bookId);
       setBookDetails((prev) => [
         ...prev,
         {
@@ -82,13 +87,12 @@ export default function Home() {
           details,
         },
       ]);
-
-      logger.info(`Successfully fetched book details for ID ${bookId}`);
+      logger.info(`Successfully processed book ID ${bookId}`);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "An error occurred";
       setError(errorMessage);
-      logger.error(`Error fetching book: ${errorMessage}`);
+      logger.error(`Error processing book: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -101,6 +105,16 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
+      <div className="flex gap-4 w-full max-w-md mb-4">
+        <button
+          onClick={() => setIsAddMode(!isAddMode)}
+          className={`px-4 py-2 rounded-lg text-white font-semibold ${
+            isAddMode ? "bg-green-600" : "bg-blue-600"
+          }`}
+        >
+          {isAddMode ? "Add Mode" : "View Mode"}
+        </button>
+      </div>
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl p-8 transition-all duration-300 hover:shadow-2xl">
           <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center animate-fade-in">

@@ -1,28 +1,23 @@
+// client/BookClient.ts
 import { BookSystemAdapter } from "../patterns/adapter/BookSystemAdapter";
 import { AudioBookDecorator } from "../patterns/decorator/AudioBookDecorator";
+import { BookOperationStrategy } from "../patterns/strategy/BookOperationStrategy";
+import { BookDetailsStrategy } from "../patterns/strategy/BookDetailsStrategy";
 import { logger } from "../utilities/logger";
-
-interface ILegacyBookSystem {
-  getBookInfo(id: number): string;
-  getBookYear(id: number): number;
-}
-
-class LegacyBookSystem implements ILegacyBookSystem {
-  getBookInfo(id: number): string {
-    return `Book ${id}: Sample Book by Sample Author`;
-  }
-
-  getBookYear(id: number): number {
-    return 2023;
-  }
-}
+import { LegacyBookSystem } from "@/patterns/adapter/LegacyBookSystem";
 
 export class BookClient {
   private bookSystem: BookSystemAdapter;
+  private strategy: BookOperationStrategy;
 
-  constructor() {
+  constructor(strategy?: BookOperationStrategy) {
     const legacySystem = new LegacyBookSystem();
     this.bookSystem = new BookSystemAdapter(legacySystem);
+    this.strategy = strategy || new BookDetailsStrategy();
+  }
+
+  setStrategy(strategy: BookOperationStrategy) {
+    this.strategy = strategy;
   }
 
   async getBookDetails(id: number): Promise<string> {
@@ -35,8 +30,9 @@ export class BookClient {
       }
 
       const audioBook = new AudioBookDecorator(await book, 180);
-      logger.info(`Retrieved book: ${audioBook.getDetails()}`);
-      return audioBook.getDetails();
+      const result = this.strategy.execute(audioBook);
+      logger.info(`Processed book: ${result}`);
+      return result;
     } catch (error) {
       logger.error(`Error fetching book: ${error}`);
       throw error;
