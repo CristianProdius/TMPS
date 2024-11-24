@@ -13,7 +13,6 @@ export class BookManagementFacade {
 
   async getBookDetails(id: number): Promise<string> {
     try {
-      // Wait for the async fetchBook operation
       const book = await this.bookSystem.fetchBook(id);
       const audioBook = new AudioBookDecorator(book);
 

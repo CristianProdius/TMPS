@@ -25,7 +25,7 @@ export class BookClient {
     this.bookSystem = new BookSystemAdapter(legacySystem);
   }
 
-  getBookDetails(id: number): string {
+  async getBookDetails(id: number): Promise<string> {
     try {
       logger.info(`Fetching book with id: ${id}`);
       const book = this.bookSystem.fetchBook(id);
@@ -34,7 +34,7 @@ export class BookClient {
         throw new Error("Book not found");
       }
 
-      const audioBook = new AudioBookDecorator(book, 180);
+      const audioBook = new AudioBookDecorator(await book, 180);
       logger.info(`Retrieved book: ${audioBook.getDetails()}`);
       return audioBook.getDetails();
     } catch (error) {

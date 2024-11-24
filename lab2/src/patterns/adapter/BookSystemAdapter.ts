@@ -12,6 +12,12 @@ interface BookData {
 }
 
 export class BookSystemAdapter {
+  private legacySystem: any;
+
+  constructor(legacySystem: any) {
+    this.legacySystem = legacySystem;
+  }
+
   private async fetchBooksData(): Promise<BookData[]> {
     try {
       const response = await fetch("/data/books.json");

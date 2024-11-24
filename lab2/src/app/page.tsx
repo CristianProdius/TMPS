@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { BookSystemAdapter } from "../patterns/adapter/BookSystemAdapter";
 import { BookManagementFacade } from "../patterns/facade/BookManagementFacade";
+import { LegacyBookSystem } from "@/patterns/adapter/LegacyBookSystem";
 import { logger } from "../utilities/logger";
 import { X } from "lucide-react";
 
@@ -68,7 +69,8 @@ export default function Home() {
     }
 
     try {
-      const adapter = new BookSystemAdapter();
+      const legacySystem = new LegacyBookSystem();
+      const adapter = new BookSystemAdapter(legacySystem);
       const facade = new BookManagementFacade(adapter);
 
       const details = await facade.getBookDetails(bookId);
